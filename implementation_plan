@@ -1,0 +1,195 @@
+# BCAC591 Semester Project: Alumni Connect Portal
+
+**Subject:** BCAC591 – Web Technology Lab (PHP with MySQL)  
+**Project Title:** Alumni Connect Portal  
+**Team Size:** 4 Students  
+
+---
+
+## 1. Project Details Report (For Lab Submission)
+
+### 1.1 Project Title
+**Alumni Connect Portal** (A Web-based Alumni-Student Interaction, Career & Notice Portal)
+
+### 1.2 Problem Statement (3–4 Lines)
+> Graduating students frequently lack direct access to senior alumni for authentic career guidance, campus notices, and verified job referrals. Meanwhile, college administrations lack a centralized system to track passed-out batches and publish official announcements. The Alumni Connect Portal bridges this gap by providing an active platform where alumni and administrators list job opportunities, students apply with their resumes, admins publish official college notices and promote graduating students to alumni status, and alumni can contribute to campus event funding.
+
+### 1.3 User Roles & Permissions (3 Roles)
+
+1. **Student**:
+   * Browse verified alumni directory with search and filter.
+   * View official college announcements & notices published by Admin.
+   * Browse jobs and internships posted by Alumni and Admins.
+   * Apply for job openings with resume upload (PDF).
+   * Track application status (`Pending` → `Shortlisted` → `Referred` / `Rejected`).
+   * View upcoming events and view the Event Funding Contribution portal.
+   * Edit personal student profile (skills, contact, profile picture).
+
+2. **Alumni**:
+   * Create, view, edit, and delete (CRUD) job and referral postings.
+   * Review student applications submitted for their posted jobs.
+   * Update applicant statuses (`Pending` → `Shortlisted` → `Referred` / `Rejected`).
+   * View official college notices from the administration.
+   * View and participate in the Event Funding Contribution page (front-end pledge/donation UI).
+   * Update professional profile (current company, designation, batch year, LinkedIn).
+
+3. **Admin (College Faculty / Placement Cell)**:
+   * View central dashboard with live statistics (total students, alumni, jobs, notices).
+   * **Promote Student to Alumni**: Upgrade a passed-out student's account to an Alumni account upon graduation.
+   * **Publish College Notices**: Create, edit, and delete official announcements for students and alumni.
+   * **Post Official Jobs/Drives**: Admin can also list campus recruitment drives alongside alumni listings.
+   * Manage users (activate, deactivate, or delete user accounts).
+   * Manage and moderate all job postings and events.
+
+---
+
+## 2. Mapping to Sir's Mandatory Modules Checklist
+
+| Mandatory Module (From Notice) | How Our Project Implements It | Relevant Files |
+| :--- | :--- | :--- |
+| **1. Authentication** | Register with role selection, Login with `password_verify()`, Logout, and secure password hashing using PHP's native `password_hash()`. | `register.php`, `login.php`, `logout.php` |
+| **2. Role-Based Access** | Session check (`$_SESSION['role']`). Enforces page guards so students cannot access admin pages, and alumni cannot access student application forms. | `includes/auth_check.php` |
+| **3. Dashboard** | Dedicated, non-blank landing page for each role displaying quick summary stats, latest notices, and quick action buttons. | `student-dashboard.php`, `alumni-dashboard.php`, `admin/dashboard.php` |
+| **4. Core Entity CRUD** | **Jobs / Opportunities**: Both **Alumni and Admin** can **Add** a job, **View** job details, **Edit** their listing, and **Delete** expired listings. | `jobs/job-add.php`, `jobs/job-edit.php`, `jobs/job-delete.php`, `jobs/job-view.php` |
+| **5. Listing Page** | Job Listings and Alumni Directory tables with **Search keyword input** and **Sort by date/company**. | `jobs/job-list.php`, `alumni-list.php` |
+| **6. Detail View** | Dedicated single-record page showing full job requirements, company info, and direct "Apply" button. | `jobs/job-view.php?id=...`, `alumni-view.php?id=...` |
+| **7. Status Workflow (3 States)** | Job Application lifecycle: **`Pending` → `Shortlisted` → `Referred` (or `Rejected`)**, updated directly by the person who posted the job. | Handled in `jobs/job-applicants.php` via status update form. |
+| **8. Admin Panel** | Dedicated panel to manage users, **promote students to alumni**, publish notices, and view summary counters. | `admin/index.php`, `admin/users.php`, `admin/promote.php`, `admin/notices.php` |
+| **9. Form Validation** | Strict server-side PHP validation on all inputs (`empty()`, `filter_var()`, string length check, file size and MIME checks) before database insertion. | Processed at the top of each POST action file. |
+| **10. Flash Messages** | Using `$_SESSION['flash_success']` and `$_SESSION['flash_error']` to show feedback alerts after every action (e.g., "Job created", "Student promoted"). | `includes/alerts.php` |
+| **11. Profile Management** | Each logged-in user can view and edit their own contact info, bio, department, and profile photo. | `profile.php`, `profile-edit.php` |
+| **Optional Feature: File Upload** | Student PDF resume upload during job application + user profile picture upload (JPEG/PNG). | Processed via PHP `move_uploaded_file()` into `uploads/` directory. |
+| **Optional Feature: Notice Page** | Admin publishes announcements (e.g., Alumni Meet, Placement Drives, Exam Alerts). | `notices.php`, `admin/notice-add.php` |
+| **Optional Feature: Event Funding** | Front-end contribution showcase with funding goal progress bar, mock pledge form, and contributor list. | `events.php`, `event-contribute.php` |
+
+---
+
+## 3. Technology Stack & How It Works (Easy to Explain in Viva)
+
+No unnecessarily complex frameworks or libraries. Everything is built using standard, reliable tools taught in university courses:
+
+### 3.1 Backend: PHP 8.2 (Procedural + PDO)
+* **Why we use it:** PHP runs natively in XAMPP. Every `.php` file runs server-side, processes user input, interacts with the MySQL database, and outputs standard HTML.
+* **Why PDO (`PDO::prepare()` & `execute()`):** PHP Data Objects (PDO) is the standard modern database library in PHP. Using prepared statements completely prevents SQL Injection, which professors specifically check in code review.
+* **How Sessions work:** We use PHP's built-in `session_start()`. When a user logs in, we save `$_SESSION['user_id']`, `$_SESSION['user_name']`, and `$_SESSION['role']`. On protected pages, we simply check `if (!isset($_SESSION['user_id']))` to redirect unauthenticated visitors.
+
+### 3.2 Database: MySQL (InnoDB via XAMPP phpMyAdmin)
+* **Why we use it:** Relational database with Foreign Key constraints (`ON DELETE CASCADE`) to ensure data consistency between users, profiles, jobs, and applications.
+
+### 3.3 Frontend: Semantic HTML5 + Custom CSS (or Bootstrap 5 CDN)
+* **Why we use it:** Clean, modern cards, tables, navigation bars, and forms that work across mobile and desktop. No complex Node.js or npm build steps required — just clean HTML and CSS files linked directly in `<head>`.
+
+### 3.4 JavaScript: Vanilla JS (Minimal & Practical)
+* **Where we use it:**
+  * Delete confirmation popups (`onsubmit="return confirm('Are you sure?');"`).
+  * Client-side search filtering on tables.
+  * Front-end modal for the Event Funding contribution form.
+
+### 3.5 File Upload Handling: Native PHP File System
+* **How Resumes are handled:** The student form uses `enctype="multipart/form-data"`. In PHP, `$_FILES['resume']` gives the uploaded file.
+* **Security verification:**
+  1. Check extension: `pathinfo($filename, PATHINFO_EXTENSION) === 'pdf'`.
+  2. Check size: Ensure file is under 2MB (`$_FILES['resume']['size'] <= 2097152`).
+  3. Rename file: Generate a clean name using `time() . '_' . $student_id . '.pdf'` to prevent filename collisions.
+  4. Move file: `move_uploaded_file($_FILES['resume']['tmp_name'], 'uploads/resumes/' . $new_filename)`.
+
+---
+
+## 4. Database Tables (Clean & Realistic Schema)
+
+Only **5 straightforward tables** — clean, logical, and easy to explain in your lab viva:
+
+### Table 1: `users`
+Stores user accounts, login credentials, and core identity.
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `name` VARCHAR(100) NOT NULL
+* `email` VARCHAR(100) NOT NULL UNIQUE
+* `password` VARCHAR(255) NOT NULL *(hashed with `password_hash()`)*
+* `role` ENUM('student', 'alumni', 'admin') NOT NULL
+* `phone` VARCHAR(15) NULL
+* `department` VARCHAR(50) NOT NULL *(e.g., BCA, CSE, IT)*
+* `avatar` VARCHAR(255) DEFAULT 'default.png'
+* `status` ENUM('active', 'inactive') DEFAULT 'active'
+* `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+### Table 2: `alumni_details`
+Stores career & batch information for alumni (created upon registration or when a student is promoted).
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `user_id` INT NOT NULL *(FOREIGN KEY -> users.id ON DELETE CASCADE)*
+* `batch_year` INT NOT NULL *(e.g., 2022)*
+* `current_company` VARCHAR(100) NOT NULL
+* `designation` VARCHAR(100) NOT NULL
+* `city` VARCHAR(50) NULL
+* `linkedin_url` VARCHAR(200) NULL
+
+### Table 3: `jobs` (Core CRUD Entity — Listed by Alumni & Admin)
+Job and referral opportunities posted by either an alumnus or the college admin.
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `posted_by` INT NOT NULL *(FOREIGN KEY -> users.id ON DELETE CASCADE)*
+* `title` VARCHAR(150) NOT NULL
+* `company` VARCHAR(100) NOT NULL
+* `location` VARCHAR(100) NOT NULL
+* `job_type` ENUM('Full-Time', 'Part-Time', 'Internship', 'Referral') NOT NULL
+* `salary` VARCHAR(50) NULL
+* `description` TEXT NOT NULL
+* `deadline` DATE NOT NULL
+* `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+### Table 4: `applications` (Status Workflow Entity)
+Job applications submitted by students.
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `job_id` INT NOT NULL *(FOREIGN KEY -> jobs.id ON DELETE CASCADE)*
+* `student_id` INT NOT NULL *(FOREIGN KEY -> users.id ON DELETE CASCADE)*
+* `resume_file` VARCHAR(255) NOT NULL *(filename of uploaded PDF)*
+* `cover_note` TEXT NULL
+* `status` ENUM('Pending', 'Shortlisted', 'Referred', 'Rejected') DEFAULT 'Pending'
+* `applied_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+### Table 5: `notices` (Admin Notice Board)
+Official notices published by the College Admin for students and alumni.
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `admin_id` INT NOT NULL *(FOREIGN KEY -> users.id ON DELETE CASCADE)*
+* `title` VARCHAR(200) NOT NULL
+* `category` ENUM('General', 'Placement', 'Alumni Meet', 'Urgent') DEFAULT 'General'
+* `content` TEXT NOT NULL
+* `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+---
+
+## 5. Complete Page List (Every Screen in the Project)
+
+### Public / Authentication:
+1. `index.php` — Landing page with portal highlights, recent notices banner, and login/register links.
+2. `login.php` — Single login form for Students, Alumni, and Admin.
+3. `register.php` — Registration form (User chooses Student or Alumni, filling respective fields).
+4. `logout.php` — Clears `$_SESSION` and redirects to login page.
+
+### Shared & Informational Pages:
+5. `notices.php` — Notice board displaying all active college announcements from Admin.
+6. `events.php` — Upcoming alumni events and reunions.
+7. `event-contribute.php` — Front-end event funding & alumni contribution showcase (goal progress bar, mock donation form, contributor list).
+8. `profile.php` & `profile-edit.php` — View and edit personal profile details and profile picture.
+
+### Student Pages:
+9. `student-dashboard.php` — Student overview: quick links, latest notices, applied jobs count.
+10. `alumni-list.php` — Searchable alumni directory (search by name, company, batch).
+11. `alumni-view.php` — Detailed view of an alumnus's career profile.
+12. `my-applications.php` — Student's application tracker with status badges (`Pending`, `Shortlisted`, `Referred`, `Rejected`).
+
+### Jobs & Applications (Alumni, Admin & Student):
+13. `jobs/job-list.php` — All active jobs table with search keyword input and sort dropdown.
+14. `jobs/job-view.php` — Single job details view with requirements and "Apply with Resume" button.
+15. `jobs/job-add.php` — Form to post a new opening (**Accessible by Alumni and Admin**).
+16. `jobs/job-edit.php` — Form to edit a posted job (Owner or Admin).
+17. `jobs/job-delete.php` — Action script to remove an expired job.
+18. `jobs/job-applicants.php` — View applicants for a posted job, download PDF resume, and update status dropdown.
+
+### Alumni Pages:
+19. `alumni-dashboard.php` — Alumni overview: posted jobs count, received student applications, and recent notices.
+
+### Admin Pages:
+20. `admin/dashboard.php` — Central admin statistics (Total Students, Alumni, Jobs, Notices).
+21. `admin/users.php` — User list with search, status toggles (active/inactive), and delete user button.
+22. `admin/promote.php` — **Student Promotion Panel**: Select a graduating student and promote them to Alumni (captures graduation batch, company, and designation).
+23. `admin/notices.php` — Manage notices (Add new notice, edit, delete).
+24. `admin/jobs.php` — Full list of all jobs across the portal with moderation/delete controls.
