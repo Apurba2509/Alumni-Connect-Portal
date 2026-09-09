@@ -46,23 +46,23 @@ require_once __DIR__ . '/includes/header.php';
 <div class="page-header">
     <div>
         <h1>🎓 Alumni Directory</h1>
-        <p>Connect with passed-out seniors, discover where alumni are working, and find potential mentors.</p>
+        <p>Explore our global alumni community, discover where seniors work, and connect for career mentorship.</p>
     </div>
 </div>
 
 <!-- Search & Filter Bar -->
-<div class="card" style="padding: 16px 20px; margin-bottom: 24px;">
+<div class="card" style="padding: 18px 22px; margin-bottom: 28px;">
     <form method="GET" action="" class="filter-bar" style="margin-bottom: 0;">
-        <input type="text" name="search" class="form-control" placeholder="Search by name, company (e.g. Google), role, or city..." value="<?= e($search) ?>">
+        <input type="text" name="search" class="form-control" placeholder="Search by name, company (e.g. Google, Microsoft), designation, or city..." value="<?= e($search) ?>">
 
-        <select name="batch" class="form-control" style="max-width: 180px;">
+        <select name="batch" class="form-control" style="max-width: 190px;">
             <option value="all">All Passing Batches</option>
             <?php foreach ($batches as $b): ?>
                 <option value="<?= e($b) ?>" <?= ($batch === (string)$b) ? 'selected' : '' ?>>Batch of <?= e($b) ?></option>
             <?php endforeach; ?>
         </select>
 
-        <button type="submit" class="btn btn-primary">Search Alumni</button>
+        <button type="submit" class="btn btn-primary">Search Directory</button>
         <?php if (!empty($search) || $batch !== 'all'): ?>
             <a href="<?= base_url('alumni-list.php') ?>" class="btn btn-secondary">Reset</a>
         <?php endif; ?>
@@ -71,47 +71,51 @@ require_once __DIR__ . '/includes/header.php';
 
 <!-- Alumni Cards Grid -->
 <?php if (empty($alumni_list)): ?>
-    <div class="card" style="text-align: center; padding: 40px;">
-        <p style="color: var(--text-muted);">No alumni records found matching your search.</p>
+    <div class="card" style="text-align: center; padding: 48px 20px;">
+        <span style="font-size: 3rem;">🔍</span>
+        <h3 style="margin-top: 10px; color: var(--navy);">No Alumni Found</h3>
+        <p style="color: var(--text-muted);">Try adjusting your search keywords or batch filter.</p>
     </div>
 <?php else: ?>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+    <div class="alumni-grid">
         <?php foreach ($alumni_list as $alumnus): ?>
-            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="alumni-card">
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                        <div>
-                            <h3 style="font-size: 1.15rem; color: var(--text); margin-bottom: 2px;"><?= e($alumnus['name']) ?></h3>
-                            <span class="badge" style="background: #e0e7ff; color: #4338ca;">Batch of <?= e($alumnus['batch_year']) ?></span>
-                            <span class="badge" style="background: #f1f5f9; color: #475569;"><?= e($alumnus['department']) ?></span>
+                    <div class="alumni-header">
+                        <div class="alumni-avatar-bubble">
+                            <?= strtoupper(substr($alumnus['name'], 0, 1)) ?>
                         </div>
-                        <div style="font-size: 2.2rem; background: #f8fafc; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
-                            👨‍💼
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: 2px;">
+                                <?= e($alumnus['name']) ?>
+                            </h3>
+                            <span class="badge" style="background: #e0e7ff; color: #4338ca;">Batch '<?= substr((string)$alumnus['batch_year'], -2) ?></span>
+                            <span class="badge" style="background: #f1f5f9; color: #475569;"><?= e($alumnus['department']) ?></span>
                         </div>
                     </div>
 
-                    <div style="margin: 14px 0;">
-                        <div style="font-weight: 700; color: var(--primary); font-size: 1rem;">
+                    <div class="alumni-company-box">
+                        <div style="font-weight: 700; color: var(--primary); font-size: 0.95rem; margin-bottom: 2px;">
                             <?= e($alumnus['designation']) ?>
                         </div>
-                        <div style="color: var(--secondary); font-size: 0.95rem; margin-top: 2px;">
+                        <div style="color: var(--navy); font-weight: 600; font-size: 0.9rem;">
                             🏢 <?= e($alumnus['current_company']) ?>
                         </div>
                         <?php if (!empty($alumnus['city'])): ?>
-                            <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+                            <div style="color: var(--text-muted); font-size: 0.82rem; margin-top: 4px;">
                                 📍 <?= e($alumnus['city']) ?>
                             </div>
                         <?php endif; ?>
                     </div>
                 </div>
 
-                <div style="border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="border-top: 1px solid var(--border); padding-top: 14px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
                     <?php if (!empty($alumnus['linkedin_url'])): ?>
-                        <a href="<?= e($alumnus['linkedin_url']) ?>" target="_blank" style="font-size: 0.85rem; font-weight: 600;">
+                        <a href="<?= e($alumnus['linkedin_url']) ?>" target="_blank" style="font-size: 0.85rem; font-weight: 600; color: #0077b5;">
                             🔗 LinkedIn
                         </a>
                     <?php else: ?>
-                        <span></span>
+                        <span style="font-size: 0.8rem; color: var(--text-light);">Verified Alumnus</span>
                     <?php endif; ?>
 
                     <a href="<?= base_url('alumni-view.php?id=' . $alumnus['id']) ?>" class="btn btn-sm btn-primary">

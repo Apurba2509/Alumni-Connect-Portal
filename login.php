@@ -3,7 +3,7 @@
 // BCAC591: User Login
 // =======================================================
 
-$page_title = "Login";
+$page_title = "Sign In";
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
@@ -25,7 +25,7 @@ $email = '';
 
 // Process Login Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
     // Server-Side Form Validation
@@ -76,10 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<div style="max-width: 480px; margin: 30px auto;">
-    <div class="card">
-        <h1 class="card-title" style="text-align: center; font-size: 1.6rem; margin-bottom: 8px;">Portal Sign In</h1>
-        <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">Sign in with your Student, Alumni, or Admin account</p>
+<div style="max-width: 440px; margin: 40px auto;">
+    <div class="card" style="padding: 36px 32px; box-shadow: var(--shadow-md);">
+        
+        <div style="text-align: center; margin-bottom: 28px;">
+            <div style="width: 50px; height: 50px; background: var(--primary-light); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 14px;">
+                🎓
+            </div>
+            <h1 class="card-title" style="font-size: 1.6rem; margin-bottom: 6px;">Portal Sign In</h1>
+            <p style="color: var(--text-muted); font-size: 0.92rem;">Welcome back! Please enter your details.</p>
+        </div>
 
         <?php if (!empty($error)): ?>
             <div class="alert alert-error">
@@ -90,8 +96,8 @@ require_once __DIR__ . '/includes/header.php';
 
         <form method="POST" action="">
             <div class="form-group">
-                <label class="form-label" for="email">Email Address</label>
-                <input type="email" id="email" name="email" class="form-control" value="<?= e($email) ?>" placeholder="e.g. rahul@gmail.com" required autofocus>
+                <label class="form-label" for="email">College / Personal Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="<?= e($email) ?>" placeholder="name@example.com" required autofocus>
             </div>
 
             <div class="form-group">
@@ -99,20 +105,27 @@ require_once __DIR__ . '/includes/header.php';
                 <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Sign In</button>
+            <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 0.96rem; margin-top: 6px;">
+                Sign In to Portal &rarr;
+            </button>
         </form>
 
-        <div style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">
-            Don't have an account yet? <a href="<?= base_url('register.php') ?>" style="font-weight: 600;">Register here</a>
+        <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-muted);">
+            Don't have an account yet? <a href="<?= base_url('register.php') ?>" style="font-weight: 700;">Create Account</a>
         </div>
         
-        <!-- Lab Demo Credentials Hint Box -->
-        <div style="background: #f1f5f9; border-radius: 6px; padding: 12px; margin-top: 20px; font-size: 0.85rem; color: #475569;">
-            <strong>🔑 Demo Test Credentials:</strong><br>
-            • Password for ALL accounts is: <code>changeme</code><br>
-            • Admin: <code>admin@college.edu</code><br>
-            • Alumni: <code>rahul@gmail.com</code><br>
-            • Student: <code>amit@college.edu</code>
+        <!-- Lab Evaluation Test Credentials Hint Box -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 24px; font-size: 0.84rem; color: var(--secondary);">
+            <div style="font-weight: 700; color: var(--navy); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <span>🔑</span>
+                <span>Demo Evaluation Credentials:</span>
+            </div>
+            <div style="line-height: 1.6;">
+                Password for all accounts: <code>changeme</code><br>
+                • Admin: <code>admin@college.edu</code><br>
+                • Alumni: <code>rahul@gmail.com</code><br>
+                • Student: <code>amit@college.edu</code>
+            </div>
         </div>
     </div>
 </div>

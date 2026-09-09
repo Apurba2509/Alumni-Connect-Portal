@@ -86,10 +86,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<div style="max-width: 650px; margin: 20px auto;">
-    <div class="card">
-        <h1 class="card-title" style="text-align: center; font-size: 1.6rem; margin-bottom: 6px;">Create an Account</h1>
-        <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">Join the Alumni Connect Portal as a Current Student or an Alumnus</p>
+<div style="max-width: 680px; margin: 30px auto;">
+    <div class="card" style="padding: 36px 32px; box-shadow: var(--shadow-md);">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="width: 50px; height: 50px; background: var(--primary-light); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 12px;">
+                📝
+            </div>
+            <h1 class="card-title" style="font-size: 1.65rem; margin-bottom: 6px;">Create an Account</h1>
+            <p style="color: var(--text-muted); font-size: 0.92rem;">Join the official Alumni Connect Portal community</p>
+        </div>
 
         <?php if (!empty($error)): ?>
             <div class="alert alert-error">
@@ -99,17 +104,24 @@ require_once __DIR__ . '/includes/header.php';
         <?php endif; ?>
 
         <form method="POST" action="">
-            <!-- Role Selection -->
-            <div class="form-group">
-                <label class="form-label">I am registering as a:</label>
-                <div style="display: flex; gap: 20px; margin-top: 6px;">
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <!-- Role Selection Segmented Cards -->
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label" style="margin-bottom: 8px;">Select Account Type *</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <label style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1.5px solid <?= ($role === 'student') ? 'var(--primary)' : 'var(--border)' ?>; border-radius: 8px; cursor: pointer; background: <?= ($role === 'student') ? 'var(--primary-light)' : '#ffffff' ?>; transition: all 0.15s ease;">
                         <input type="radio" name="role" value="student" <?= ($role === 'student') ? 'checked' : '' ?> onchange="toggleAlumniFields(false)">
-                        <strong>Current Student</strong>
+                        <div>
+                            <strong style="color: var(--navy); display: block;">🎓 Student</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Current enrolled student</span>
+                        </div>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+
+                    <label style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1.5px solid <?= ($role === 'alumni') ? 'var(--primary)' : 'var(--border)' ?>; border-radius: 8px; cursor: pointer; background: <?= ($role === 'alumni') ? 'var(--primary-light)' : '#ffffff' ?>; transition: all 0.15s ease;">
                         <input type="radio" name="role" value="alumni" <?= ($role === 'alumni') ? 'checked' : '' ?> onchange="toggleAlumniFields(true)">
-                        <strong>College Alumnus (Passed Out)</strong>
+                        <div>
+                            <strong style="color: var(--navy); display: block;">👨‍💼 Alumnus</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Passed out graduate</span>
+                        </div>
                     </label>
                 </div>
             </div>
@@ -146,8 +158,10 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- Alumni Specific Fields (Hidden by default unless Alumni selected) -->
-            <div id="alumni-fields" style="display: <?= ($role === 'alumni') ? 'block' : 'none' ?>; background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
-                <h4 style="margin-bottom: 12px; color: var(--primary);">🎓 Alumni Professional Details</h4>
+            <div id="alumni-fields" style="display: <?= ($role === 'alumni') ? 'block' : 'none' ?>; background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 24px;">
+                <h4 style="margin-bottom: 14px; color: var(--navy); display: flex; align-items: center; gap: 6px;">
+                    <span>🎓</span> Alumni Professional Details
+                </h4>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
@@ -192,11 +206,13 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 12px;">Create Account</button>
+            <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 0.98rem; margin-top: 8px;">
+                Create Account &rarr;
+            </button>
         </form>
 
-        <div style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">
-            Already have an account? <a href="<?= base_url('login.php') ?>" style="font-weight: 600;">Sign in here</a>
+        <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-muted);">
+            Already have an account? <a href="<?= base_url('login.php') ?>" style="font-weight: 700;">Sign in here</a>
         </div>
     </div>
 </div>
