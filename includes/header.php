@@ -63,7 +63,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 </div>
                                 <a href="<?= base_url('profile.php') ?>" class="nav-user-name" title="View Profile"><?= e($user['name']) ?></a>
                                 <span class="nav-role-badge <?= e($user['role']) ?>"><?= e($user['role']) ?></span>
-                                <a href="<?= base_url('logout.php') ?>" class="btn btn-sm btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-left: 4px;">Logout</a>
+                                <a href="<?= base_url('logout.php') ?>" class="btn btn-sm btn-secondary" style="padding: 2px 8px; font-size: 0.76rem; border-radius: var(--radius-pill); white-space: nowrap; line-height: 1.3;">Logout</a>
                             </div>
                         </li>
                     <?php else: ?>

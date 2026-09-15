@@ -193,3 +193,67 @@ Official notices published by the College Admin for students and alumni.
 22. `admin/promote.php` — **Student Promotion Panel**: Select a graduating student and promote them to Alumni (captures graduation batch, company, and designation).
 23. `admin/notices.php` — Manage notices (Add new notice, edit, delete).
 24. `admin/jobs.php` — Full list of all jobs across the portal with moderation/delete controls.
+
+---
+
+## 6. Project Folder & File Structure (Fully Detailed)
+
+```text
+c:/xampp/htdocs/Clg Project/Alumni-Connect-Portal/
+│
+├── admin/                                  # College Administration Area (Role Guarded: Admin Only)
+│   ├── dashboard.php                       # Central admin hub with live portal statistics & quick action links
+│   ├── index.php                           # Admin directory entry point (redirects to dashboard.php)
+│   ├── jobs.php                            # Portal-wide job listing with moderation & deletion controls
+│   ├── notice-add.php                      # Notice creation shortcut (redirects to notices.php)
+│   ├── notices.php                         # Publish, view, and delete official college notices
+│   ├── promote.php                         # Student Promotion Panel: upgrades passed-out students to Alumni
+│   └── users.php                           # User account management (search, active/inactive toggle, delete)
+│
+├── assets/                                 # Static Frontend Design Assets
+│   └── css/
+│       └── style.css                       # Custom Vanilla CSS design system (colors, typography, responsive)
+│
+├── config/                                 # Server & Database Configuration
+│   └── db.php                              # PDO database connection setup (UTF-8, prepared statements)
+│
+├── includes/                               # Reusable Backend Modules & Layout Partials
+│   ├── alerts.php                          # Flash message alert renderer (success, error, info notifications)
+│   ├── auth_check.php                      # Route guards & authentication middleware (require_login, require_role)
+│   ├── footer.php                          # Common HTML footer layout partial
+│   ├── functions.php                       # Core helper functions (e() for XSS, base_url(), current_user(), flash)
+│   └── header.php                          # Common HTML header, responsive navigation bar, and user profile pill
+│
+├── jobs/                                   # Job & Career Opportunity Module (CRUD + Status Workflow)
+│   ├── job-add.php                         # Form to post a new job or referral opening (Alumni & Admin)
+│   ├── job-applicants.php                  # Applicant review table, resume download & 3-stage status workflow
+│   ├── job-delete.php                      # Server-side script to delete an expired job posting (Owner/Admin)
+│   ├── job-edit.php                        # Form to update and edit existing job details (Owner/Admin)
+│   ├── job-list.php                        # Searchable & sortable directory of all active jobs & referrals
+│   └── job-view.php                        # Dedicated single-job detail view with PDF resume upload form
+│
+├── sql/                                    # Database Scripts
+│   └── schema.sql                          # MySQL schema for 5 tables with InnoDB constraints & demo seed data
+│
+├── uploads/                                # Dynamic User File Storage (Native PHP File System)
+│   ├── avatars/                            # Stored user profile pictures (JPEG/PNG/WebP)
+│   └── resumes/                            # Stored student job application resumes (PDF documents)
+│
+├── alumni-dashboard.php                    # Alumni landing page: posted jobs, applicants count & notices
+├── alumni-list.php                         # Searchable directory of verified alumni with batch year filters
+├── alumni-view.php                         # Detailed career profile view of a selected alumnus
+├── event-contribute.php                    # Event funding showcase: fundraising progress bar & pledge form
+├── events.php                              # Upcoming college alumni events, reunions, hackathons & RSVP
+├── index.php                               # Portal landing/home page with live counters & recent highlights
+├── login.php                               # Unified authentication portal for Students, Alumni, and Admins
+├── logout.php                              # Session destruction & redirect script
+├── my-applications.php                     # Student's job application tracker with real-time status badges
+├── notices.php                             # Public notice board for campus placement drives & announcements
+├── profile-edit.php                        # Edit personal profile, contact details, alumni info & avatar upload
+├── profile.php                             # View personal account information and current profile picture
+├── register.php                            # New user registration with dynamic role selection (Student/Alumni)
+├── student-dashboard.php                   # Student career overview: application counters & latest notices
+├── implementation_plan                     # Complete semester project documentation & specification report
+├── starting.md                             # Quick-start setup guide with pre-configured demo account credentials
+└── VIVA_GUIDE.md                           # Lab viva exam preparation guide with top 10 questions and answers
+```
