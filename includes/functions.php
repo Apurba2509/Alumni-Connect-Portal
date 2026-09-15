@@ -43,7 +43,8 @@ function current_user() {
         'name'       => $_SESSION['user_name'] ?? '',
         'email'      => $_SESSION['user_email'] ?? '',
         'role'       => $_SESSION['user_role'] ?? 'student',
-        'department' => $_SESSION['user_department'] ?? ''
+        'department' => $_SESSION['user_department'] ?? '',
+        'avatar'     => $_SESSION['user_avatar'] ?? 'default.png'
     ];
 }
 

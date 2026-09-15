@@ -46,8 +46,12 @@ require_once __DIR__ . '/includes/header.php';
 <div style="max-width: 650px; margin: 0 auto;">
     <div class="card">
         <div style="text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 3.5rem; background: #f1f5f9; border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 2px solid var(--border);">
-                <?= ($user['role'] === 'admin') ? '🛡️' : (($user['role'] === 'alumni') ? '👨‍💼' : '🎓') ?>
+            <div style="width: 96px; height: 96px; border-radius: 50%; overflow: hidden; background: #f1f5f9; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 3px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); font-size: 3.2rem;">
+                <?php if (!empty($user['avatar']) && $user['avatar'] !== 'default.png' && file_exists(__DIR__ . '/uploads/avatars/' . $user['avatar'])): ?>
+                    <img src="<?= base_url('uploads/avatars/' . $user['avatar']) ?>" alt="<?= e($user['name']) ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                <?php else: ?>
+                    <?= ($user['role'] === 'admin') ? '🛡️' : (($user['role'] === 'alumni') ? '👨‍💼' : '🎓') ?>
+                <?php endif; ?>
             </div>
             <h2 style="font-size: 1.4rem; color: var(--text);"><?= e($user['name']) ?></h2>
             <span class="badge" style="background: #e2e8f0; color: #334155;"><?= strtoupper(e($user['role'])) ?></span>

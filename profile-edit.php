@@ -41,40 +41,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($name) || empty($department)) {
         $error = 'Name and department cannot be empty.';
     } else {
-        try {
-            $pdo->beginTransaction();
+        $avatar_filename = null;
 
-            // Update user table
-            $update_user = $pdo->prepare("UPDATE users SET name = ?, phone = ?, department = ? WHERE id = ?");
-            $update_user->execute([$name, $phone, $department, $user_id]);
+        // Process Avatar File Upload if provided
+        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+            $file_tmp  = $_FILES['avatar']['tmp_name'];
+            $file_name = $_FILES['avatar']['name'];
+            $file_size = $_FILES['avatar']['size'];
+            $file_ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-            // Update session name and department
-            $_SESSION['user_name']       = $name;
-            $_SESSION['user_department'] = $department;
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
+            if (!in_array($file_ext, $allowed_exts, true)) {
+                $error = 'Invalid avatar image type. Only JPG, PNG, and WebP are allowed.';
+            } elseif ($file_size > 2097152) {
+                $error = 'Avatar image exceeds the 2MB size limit.';
+            } elseif (@getimagesize($file_tmp) === false) {
+                $error = 'The uploaded file is not a valid image.';
+            } else {
+                $avatar_filename = 'avatar_' . $user_id . '_' . time() . '.' . $file_ext;
+                $upload_dest = __DIR__ . '/uploads/avatars/' . $avatar_filename;
 
-            // Update alumni details if role is alumni
-            if ($user['role'] === 'alumni') {
-                $update_alumni = $pdo->prepare("
-                    INSERT INTO alumni_details (user_id, batch_year, current_company, designation, city, linkedin_url) 
-                    VALUES (?, ?, ?, ?, ?, ?)
-                    ON DUPLICATE KEY UPDATE 
-                        batch_year = VALUES(batch_year), 
-                        current_company = VALUES(current_company), 
-                        designation = VALUES(designation), 
-                        city = VALUES(city), 
-                        linkedin_url = VALUES(linkedin_url)
-                ");
-                $update_alumni->execute([$user_id, $batch_year, $current_company, $designation, $city, $linkedin_url]);
+                if (!move_uploaded_file($file_tmp, $upload_dest)) {
+                    $error = 'Failed to save avatar image file. Please try again.';
+                    $avatar_filename = null;
+                } else {
+                    // Remove old avatar if it's not default.png
+                    if (!empty($user['avatar']) && $user['avatar'] !== 'default.png') {
+                        $old_file = __DIR__ . '/uploads/avatars/' . $user['avatar'];
+                        if (file_exists($old_file)) {
+                            @unlink($old_file);
+                        }
+                    }
+                }
             }
+        }
 
-            $pdo->commit();
+        if (empty($error)) {
+            try {
+                $pdo->beginTransaction();
 
-            set_flash('success', 'Profile information updated successfully!');
-            header('Location: ' . base_url('profile.php'));
-            exit();
-        } catch (PDOException $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
-            $error = 'Database error: ' . $e->getMessage();
+                // Update user table
+                if ($avatar_filename) {
+                    $update_user = $pdo->prepare("UPDATE users SET name = ?, phone = ?, department = ?, avatar = ? WHERE id = ?");
+                    $update_user->execute([$name, $phone, $department, $avatar_filename, $user_id]);
+                    $_SESSION['user_avatar'] = $avatar_filename;
+                } else {
+                    $update_user = $pdo->prepare("UPDATE users SET name = ?, phone = ?, department = ? WHERE id = ?");
+                    $update_user->execute([$name, $phone, $department, $user_id]);
+                }
+
+                // Update session name and department
+                $_SESSION['user_name']       = $name;
+                $_SESSION['user_department'] = $department;
+
+                // Update alumni details if role is alumni
+                if ($user['role'] === 'alumni') {
+                    $update_alumni = $pdo->prepare("
+                        INSERT INTO alumni_details (user_id, batch_year, current_company, designation, city, linkedin_url) 
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE 
+                            batch_year = VALUES(batch_year), 
+                            current_company = VALUES(current_company), 
+                            designation = VALUES(designation), 
+                            city = VALUES(city), 
+                            linkedin_url = VALUES(linkedin_url)
+                    ");
+                    $update_alumni->execute([$user_id, $batch_year, $current_company, $designation, $city, $linkedin_url]);
+                }
+
+                $pdo->commit();
+
+                set_flash('success', 'Profile information updated successfully!');
+                header('Location: ' . base_url('profile.php'));
+                exit();
+            } catch (PDOException $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                $error = 'Database error: ' . $e->getMessage();
+            }
         }
     }
 }
@@ -101,7 +144,25 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <!-- Profile Picture / Avatar Upload -->
+            <div class="form-group" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <label class="form-label" style="margin-bottom: 10px;">Profile Picture / Avatar</label>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 2px solid var(--border); flex-shrink: 0;">
+                        <?php if (!empty($user['avatar']) && $user['avatar'] !== 'default.png' && file_exists(__DIR__ . '/uploads/avatars/' . $user['avatar'])): ?>
+                            <img src="<?= base_url('uploads/avatars/' . $user['avatar']) ?>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        <?php else: ?>
+                            <?= ($user['role'] === 'admin') ? '🛡️' : (($user['role'] === 'alumni') ? '👨‍💼' : '🎓') ?>
+                        <?php endif; ?>
+                    </div>
+                    <div style="flex: 1;">
+                        <input type="file" id="avatar" name="avatar" class="form-control" accept="image/jpeg,image/png,image/webp">
+                        <span class="form-help">Upload photo (JPG, PNG, WebP &bull; Max 2MB).</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label" for="name">Full Name *</label>
                 <input type="text" id="name" name="name" class="form-control" value="<?= e($user['name']) ?>" required>

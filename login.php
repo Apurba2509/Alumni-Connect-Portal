@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user_email']      = $user['email'];
                     $_SESSION['user_role']       = $user['role'];
                     $_SESSION['user_department'] = $user['department'];
+                    $_SESSION['user_avatar']     = $user['avatar'] ?? 'default.png';
 
                     set_flash('success', 'Welcome back, ' . $user['name'] . '!');
 

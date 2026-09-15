@@ -37,6 +37,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <li><a href="<?= base_url('alumni-list.php') ?>" class="<?= ($current_page === 'alumni-list.php' || $current_page === 'alumni-view.php') ? 'active' : '' ?>">Directory</a></li>
                     <li><a href="<?= base_url('jobs/job-list.php') ?>" class="<?= (strpos($current_page, 'job') !== false) ? 'active' : '' ?>">Jobs & Referrals</a></li>
                     <li><a href="<?= base_url('notices.php') ?>" class="<?= ($current_page === 'notices.php') ? 'active' : '' ?>">Notices</a></li>
+                    <li><a href="<?= base_url('events.php') ?>" class="<?= ($current_page === 'events.php') ? 'active' : '' ?>">Events</a></li>
                     <li><a href="<?= base_url('event-contribute.php') ?>" class="<?= ($current_page === 'event-contribute.php') ? 'active' : '' ?>">Event Funding</a></li>
 
                     <?php if (is_logged_in()): ?>
@@ -53,8 +54,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                         <li style="margin-left: 8px;">
                             <div class="nav-user">
-                                <div class="nav-user-avatar">
-                                    <?= strtoupper(substr($user['name'], 0, 1)) ?>
+                                <div class="nav-user-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                    <?php if (!empty($user['avatar']) && $user['avatar'] !== 'default.png' && file_exists(__DIR__ . '/../uploads/avatars/' . $user['avatar'])): ?>
+                                        <img src="<?= base_url('uploads/avatars/' . $user['avatar']) ?>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    <?php else: ?>
+                                        <?= strtoupper(substr($user['name'], 0, 1)) ?>
+                                    <?php endif; ?>
                                 </div>
                                 <a href="<?= base_url('profile.php') ?>" class="nav-user-name" title="View Profile"><?= e($user['name']) ?></a>
                                 <span class="nav-role-badge <?= e($user['role']) ?>"><?= e($user['role']) ?></span>
